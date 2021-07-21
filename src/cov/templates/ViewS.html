@@ -1,0 +1,168 @@
+{% extends 'nav.html' %}
+{% load static %}
+{% block content  %}
+<!DOCTYPE html>
+<html>
+    <body>
+        <div class="btn">
+        <input type="button" class="button" value="Generate a table." onclick="generate_table()">
+            </div>
+        <script>
+
+            var data = JSON.parse('{{ data2 | escapejs }}');
+            var values = (Object.values(data));
+            //  console.log(values)
+            //  var i
+            //  for(i = 0 ; i<values.length; i++)
+            //   {  
+            //       for(let j in values[i])
+            //         console.log(values[i][j]);
+            //   }
+
+
+             function generate_table() {
+
+
+  // get the reference for the body
+  var body = document.getElementsByTagName("body")[0];
+
+
+  // creates a <table> element and a <tbody> element
+  var tbl = document.createElement("table");
+  var tblBody = document.createElement("tbody");
+  
+  let elem = ["Contact no.", "Description", "Latitude", "Longitude", "Resource", "User"]
+
+  // creating all cells
+  for (var i = -1; i <values.length; i++) {
+    // creates a table row
+    var row = document.createElement("tr");
+
+    if(i == -1){
+        for(var k =0; k<6; k++)
+        {
+      var tblhead = document.createElement("th");
+      var headText = document.createTextNode(elem[k]);
+      tblhead.appendChild(headText);
+      row.appendChild(tblhead);
+      }
+      tblBody.appendChild(row);
+      continue;
+     
+    }
+
+    
+    for (let j in values[i]) {
+      // Create a <td> element and a text node, make the text
+      // node the contents of the <td>, and put the <td> at
+      // the end of the table row
+      
+   
+
+      var cell = document.createElement("td");
+      var cellText = document.createTextNode(values[i][j]);
+      cell.appendChild(cellText);
+      row.appendChild(cell);
+      //console.log(j);  
+      
+   
+    }
+  
+      
+
+    // add the row to the end of the table body
+    // if(i == 0)
+    // {
+    //   tblBody.appendChild()
+    // }
+    tblBody.appendChild(row);
+    
+    
+  }
+
+  // put the <tbody> in the <table>
+  tbl.appendChild(tblBody);
+  // appends <table> into <body>
+  body.appendChild(tbl);
+  // sets the border attribute of tbl to 2;
+  tbl.setAttribute("border", "2");
+   tbl.setAttribute("class", "hello");
+}
+
+        </script>
+    <style>
+
+.btn{
+padding-left:12%;
+padding-top:5%;
+}
+    .button{
+  border-radius: 10px;
+  background-color: rgb(0, 146, 44);
+  color: rgb(255, 255, 255);
+  width: 20%;
+  height: 30px;
+  font-size:large ;
+  font-style: bold;
+  font-family: 'Open Sans', 'Helvetica Neue', 'Segoe UI', 'Calibri', 'Arial', sans-serif;
+
+
+}
+.button:hover {
+  transition: 1s ease-in-out;
+  background: #012e12;
+}
+
+.button:hover svg {
+  stroke-dashoffset: -480;
+}
+   .hello{
+    border-collapse: collapse;
+    margin: 25px 0 0 100px;
+    font-size: 0.9em;
+    font-family: sans-serif;
+    min-width: 400px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+
+
+  }
+  .hello thead tr {
+    background-color: #009879;
+    color: #ffffff;
+    text-align: left;
+
+}
+
+
+.hello td {
+    padding: 12px 15px;
+
+}
+
+.hello th{
+    background-color: #00ff99;
+     padding: 12px 15px;
+}
+.hello tbody tr {
+    border-bottom: 1px solid #dddddd;
+}
+
+.hello tbody tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+}
+
+.hello tbody tr:last-of-type {
+    border-bottom: 2px solid #009879;
+}
+
+.hello tbody tr.active-row {
+    font-weight: bold;
+    color: #009879;
+}
+
+
+
+    </style>
+    </body>
+</html>
+{% endblock content  %}

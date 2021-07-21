@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+    <head >
+        {% load static %}
+
+      
+
+
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8" /> 
+        <title>Google Maps Multiple Markers</title> 
+        <script src="http://maps.google.com/maps/api/js?sensor=false" 
+                type="text/javascript"></script>
+    </head>
+    <body>
+           
+            
+            <label for="res">Choose resource:</label>
+            <select name="res" id="res">
+              <option value="Masks">Masks</option>
+              <option value="oxygen cylinder">oxygen cylinder</option>
+              <option value="remedvsir">remedvsir</option>
+              <option value="vitamins">vitamins</option>
+              <option value="plasma blood">plasma blood</option>
+              <option value="something else">something else</option>
+            </select>
+  <br/>
+           <button id="btn">Get the Selected res</button>
+           <div id="map" style="width: 500px; height: 400px;"></div>
+            <script>
+            document.getElementById("btn").addEventListener("click", function() {
+
+                var lat1;
+                var lng1;
+                var data = JSON.parse('{{ data | escapejs }}');
+                //var values = Object.keys(data).map(function(key){
+               // console.log(data[key]);
+                //});
+
+                var values = (Object.values(data));
+                //console.log(values);
+    let locations2 = [];        
+    for (let i = 0; i < values.length; i++) {
+        var desp;
+        let smol = [];
+        for (let j in values[i]) {
+            if(j == "cono")
+            {
+               desp = values[i][j] + ","; 
+              // console.log(desp);
+            }
+            else if(j == "des")
+            {
+                desp = desp + values[i][j]+","
+                //console.log(desp);
+            }
+
+            else if(j == "res" )
+            {
+                desp = desp +values[i][j]+ ",";
+                //console.log(desp);
+            }
+
+            else if(j == "uname")
+            {
+                desp = desp + values[i][j];
+                //console.log(desp);
+                smol.unshift(desp);
+            }
+            else if( j == "lat")
+            {
+
+                smol.push(parseFloat(values[i][j]));
+            }
+
+            else{
+                smol.push(parseFloat(values[i][j]));
+            }
+
+            //console.log(j + ": " + values[i][j] + "<br>");
+        }
+        //console.log(smol);
+        locations2.push(smol);
+        
+    }
+    console.log(locations2);
+                
+            //    var values2 = values[i].map(function(key){
+            //    console.log(values[key]);
+            //    });
+
+
+
+         function showLocation(position) {
+            var latitude = position.coords.latitude;
+            var longitude = position.coords.longitude;
+            //console.log(latitude);
+            //console.log(longitude);
+            var latlongvalue = position.coords.latitude + ","
+            + position.coords.longitude;
+            getCoords(latitude, longitude);
+         }
+
+         
+         function getLocation(){
+            if(navigator.geolocation){
+               // timeout at 60000 milliseconds (60 seconds)
+               navigator.geolocation.getCurrentPosition(showLocation);
+              
+            } 
+            else{
+               alert("Sorry, browser does not support geolocation!");
+            }
+         }
+        function getCoords(lat, lng)
+      {
+           lat1 = lat;
+           lng1 = lng;   
+     
+      }
+
+
+      function mapInit(){    
+    var locations = locations2;
+
+    var map = new google.maps.Map(document.getElementById('map'), {
+      zoom: 10,
+      center: new google.maps.LatLng(19.0760, 72.8777),
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    });
+
+    var infowindow = new google.maps.InfoWindow();
+    function iconselector(sel){
+      var ar=sel.split(",");
+      if(ar[2] == "Masks")
+            {
+              return ["https://static.thenounproject.com/png/3283835-200.png","Mask"];
+    
+            }
+            else if(ar[2] == "oxygen cylinder")
+            {
+              
+              return ["https://image.flaticon.com/icons/png/512/421/421409.png","oxygen cylinder"];
+            }
+
+            else if(ar[2] == "remedvsir" )
+            {
+              return ["https://png.pngtree.com/png-vector/20190929/ourlarge/pngtree-pills-icon-vector-png-image_1768094.jpg","remedvsir"];
+
+            }
+
+            else if(ar[2] == "vitamins")
+            {
+             return ["https://cdn.iconscout.com/icon/premium/png-512-thumb/vitamins-1556266-1319731.png","vitamins"];
+            }
+            else if( ar[2] =="plasma blood")
+            {
+
+             return ["https://image.flaticon.com/icons/png/512/1321/1321325.png","plasma blood"];  
+            }
+
+            else{
+                return ["https://static.thenounproject.com/png/2955-200.png","something else"];
+            }
+      
+
+
+
+
+
+
+
+
+
+
+    };
+  
+
+
+
+
+
+
+
+
+    var marker, i;
+    const Mimage="https://static.thenounproject.com/png/3283835-200.png"
+    for (i = 0; i < locations.length; i++) { 
+     var box =document.getElementById("res").value 
+     var sel=iconselector(locations[i][0])
+     if (sel[1]!==box){continue;}
+     console.log(box)
+      
+      marker = new google.maps.Marker({
+        position: new google.maps.LatLng(locations[i][1], locations[i][2]),
+        map: map,
+        icon: {
+          url: sel[0],
+          size: new google.maps.Size(36, 50),
+          scaledSize: new google.maps.Size(36, 50),
+
+
+
+
+        }
+
+      });
+
+      google.maps.event.addListener(marker, 'click', (function(marker, i) {
+        return function() {
+          infowindow.setContent(locations[i][0]);
+          infowindow.open(map, marker);
+        }
+      })(marker, i));
+    }
+  }
+getLocation();
+setTimeout(function(){ mapInit()}, 3000);
+});
+            </script>
+      
+    </body>
+
+</html>
